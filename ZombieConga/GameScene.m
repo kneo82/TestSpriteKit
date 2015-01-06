@@ -10,6 +10,8 @@
 
 @interface GameScene ()
 @property (nonatomic, strong)   SKSpriteNode    *zombie1;
+@property (nonatomic, assign)   NSTimeInterval  lastUpdateTime;
+@property (nonatomic, assign)   NSTimeInterval  dt;
 
 @end
 
@@ -46,6 +48,16 @@
 
 - (void)update:(NSTimeInterval)currentTime {
     [super update:currentTime];
+    
+    if (self.lastUpdateTime > 0) {
+        self.dt = currentTime - self.lastUpdateTime;
+    } else {
+        self.dt = 0;
+    }
+    
+    self.lastUpdateTime = currentTime;
+    
+    NSLog(@"%f  milliseconds since last update", self.dt * 1000);
     
     SKSpriteNode *zombie1 = self.zombie1;
     zombie1.position = CGPointMake(zombie1.position.x + 4, zombie1.position.y);
