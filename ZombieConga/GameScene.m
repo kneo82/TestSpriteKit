@@ -16,6 +16,8 @@
 @implementation GameScene
 
 - (void)didMoveToView:(SKView *)view {
+    [super didMoveToView:view];
+    
     self.backgroundColor = [SKColor whiteColor];
     SKSpriteNode *background = [[SKSpriteNode alloc] initWithImageNamed:@"background1"];
     
@@ -34,12 +36,19 @@
     // Create sprite zombie
     SKSpriteNode *zombie1 = [[SKSpriteNode alloc] initWithImageNamed:@"zombie1"];
     zombie1.position = CGPointMake(400, 400);
-    [zombie1 setScale:2];
+//    [zombie1 setScale:2];
     self.zombie1 = zombie1;
     
     [self addChild:zombie1];
     
     NSLog(@"Size : (%@)", NSStringFromCGSize(background.size));
+}
+
+- (void)update:(NSTimeInterval)currentTime {
+    [super update:currentTime];
+    
+    SKSpriteNode *zombie1 = self.zombie1;
+    zombie1.position = CGPointMake(zombie1.position.x + 4, zombie1.position.y);
 }
 
 @end
