@@ -34,7 +34,7 @@
     // Create sprite zombie
     SKSpriteNode *zombie1 = [[SKSpriteNode alloc] initWithImageNamed:@"zombie1"];
     zombie1.position = CGPointMake(400, 400);
-    
+    [zombie1 setScale:2];
     self.zombie1 = zombie1;
     
     [self addChild:zombie1];
