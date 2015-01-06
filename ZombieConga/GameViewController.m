@@ -34,18 +34,13 @@
 {
     [super viewDidLoad];
 
-    // Configure the view.
+    GameScene *scene = [GameScene sceneWithSize:CGSizeMake(2048, 1536)];
+    
     SKView * skView = (SKView *)self.view;
     skView.showsFPS = YES;
     skView.showsNodeCount = YES;
-    /* Sprite Kit applies additional optimizations to improve rendering performance */
     skView.ignoresSiblingOrder = YES;
-    
-    // Create and configure the scene.
-    GameScene *scene = [GameScene unarchiveFromFile:@"GameScene"];
     scene.scaleMode = SKSceneScaleModeAspectFill;
-    
-    // Present the scene.
     [skView presentScene:scene];
 }
 
