@@ -18,6 +18,7 @@
 - (void)sceneTouched:(CGPoint)touchLocation;
 - (void)moveSprite:(SKSpriteNode *)sprite velocity:(CGPoint)velocity;
 - (void)moveZombieToward:(CGPoint)location;
+- (void)boundsCheckZombie;
 
 @end
 
@@ -65,6 +66,8 @@
     SKSpriteNode *zombie1 = self.zombie1;
     
     [self moveSprite:zombie1 velocity:self.velocity];
+    
+    [self boundsCheckZombie];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -107,6 +110,33 @@
     
     CGPoint direction = CGPointMake(offset.x / length, offset.y / length);
     self.velocity = CGPointMake(direction.x * zombieMovePointsPerSec, direction.y * zombieMovePointsPerSec);
+}
+
+- (void)boundsCheckZombie {
+    CGPoint bottomLeft = CGPointZero;
+    CGPoint topRight = CGPointMake(self.size.width, self.size.height);
+    
+    SKSpriteNode *zombie = self.zombie1;
+    
+    if (zombie.position.x <= bottomLeft.x) {
+        zombie.position = CGPointMake(bottomLeft.x, zombie.position.y);
+        self.velocity = CGPointMake(-self.velocity.x, self.velocity.y);
+    }
+    
+    if (zombie.position.x >= topRight.x) {
+        zombie.position = CGPointMake(topRight.x, zombie.position.y);
+        self.velocity = CGPointMake(-self.velocity.x, self.velocity.y);
+    }
+    
+    if (zombie.position.y <= bottomLeft.y) {
+        zombie.position = CGPointMake(zombie.position.x, bottomLeft.y);
+        self.velocity = CGPointMake(self.velocity.x, -self.velocity.y);
+    }
+    
+    if (zombie.position.y >= topRight.y) {
+        zombie.position = CGPointMake(zombie.position.x, topRight.y);
+        self.velocity = CGPointMake(self.velocity.x, -self.velocity.y);
+    }
 }
 
 @end
