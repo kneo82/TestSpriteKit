@@ -15,14 +15,21 @@
 @property (nonatomic, assign)   CGFloat         zombieMovePointsPerSec;
 @property (nonatomic, assign)   CGPoint         velocity;
 
+- (void)sceneTouched:(CGPoint)touchLocation;
+- (void)moveSprite:(SKSpriteNode *)sprite velocity:(CGPoint)velocity;
+- (void)moveZombieToward:(CGPoint)location;
+
 @end
 
 @implementation GameScene
 
+#pragma mark -
+#pragma mark Life Cycle
+
 - (void)didMoveToView:(SKView *)view {
     [super didMoveToView:view];
     
-    self.zombieMovePointsPerSec = 480;
+    self.zombieMovePointsPerSec = 240;//480;
     self.velocity = CGPointZero;
     
     // Create sprite Background
@@ -54,13 +61,29 @@
     }
     
     self.lastUpdateTime = currentTime;
-    
     NSLog(@"%f  milliseconds since last update", self.dt * 1000);
-    
     SKSpriteNode *zombie1 = self.zombie1;
-//    zombie1.position = CGPointMake(zombie1.position.x + 4, zombie1.position.y);
     
-    [self moveSprite:zombie1 velocity:CGPointMake(self.zombieMovePointsPerSec, 0)];
+    [self moveSprite:zombie1 velocity:self.velocity];
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    UITouch *touch = [touches anyObject];
+    CGPoint touchLocation = [touch locationInNode:self];
+    [self sceneTouched:touchLocation];
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    UITouch *touch = [touches anyObject];
+    CGPoint touchLocation = [touch locationInNode:self];
+    [self sceneTouched:touchLocation];
+}
+
+#pragma mark -
+#pragma mark Private
+
+- (void)sceneTouched:(CGPoint)touchLocation {
+    [self moveZombieToward:touchLocation];
 }
 
 - (void)moveSprite:(SKSpriteNode *)sprite velocity:(CGPoint)velocity {
@@ -71,6 +94,19 @@
     
     CGPoint position = sprite.position;
     sprite.position = CGPointMake(position.x + amountToMove.x, position.y + amountToMove.y);
+}
+
+- (void)moveZombieToward:(CGPoint)location {
+    SKSpriteNode *zombie = self.zombie1;
+    CGPoint position = zombie.position;
+    CGFloat zombieMovePointsPerSec = self.zombieMovePointsPerSec;
+    
+    CGPoint offset = CGPointMake(location.x - position.x, location.y - position.y);
+    
+    double length = sqrt(offset.x * offset.x + offset.y * offset.y);
+    
+    CGPoint direction = CGPointMake(offset.x / length, offset.y / length);
+    self.velocity = CGPointMake(direction.x * zombieMovePointsPerSec, direction.y * zombieMovePointsPerSec);
 }
 
 @end
