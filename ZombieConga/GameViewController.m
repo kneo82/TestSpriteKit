@@ -18,6 +18,7 @@
     NSData *data = [NSData dataWithContentsOfFile:nodePath
                                           options:NSDataReadingMappedIfSafe
                                             error:nil];
+    
     NSKeyedUnarchiver *arch = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
     [arch setClass:self forClassName:@"SKScene"];
     SKScene *scene = [arch decodeObjectForKey:NSKeyedArchiveRootObjectKey];

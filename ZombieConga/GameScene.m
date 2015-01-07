@@ -14,6 +14,7 @@
 @property (nonatomic, assign)   NSTimeInterval  dt;
 @property (nonatomic, assign)   CGFloat         zombieMovePointsPerSec;
 @property (nonatomic, assign)   CGPoint         velocity;
+@property (nonatomic, assign)   CGRect          playableRect;
 
 - (void)sceneTouched:(CGPoint)touchLocation;
 - (void)moveSprite:(SKSpriteNode *)sprite velocity:(CGPoint)velocity;
@@ -23,6 +24,26 @@
 @end
 
 @implementation GameScene
+
+#pragma mark -
+#pragma mark Initialization and Dealocation
+
+- (instancetype)initWithSize:(CGSize)size {
+    CGFloat maxAspectRatio = 16.0 / 9.0;
+    CGFloat playableHeight = size.width / maxAspectRatio;
+    CGFloat playableMargin = (size.height- playableHeight) / 2;
+    
+    self.playableRect = CGRectMake(0, playableMargin, size.width, playableHeight);
+    
+    return [super initWithSize:size];
+}
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                   reason:@"init(coder:) has not been implemented"
+                                 userInfo:nil];
+    return nil;
+}
 
 #pragma mark -
 #pragma mark Life Cycle
@@ -49,6 +70,7 @@
     
     [self addChild:zombie1];
     
+    [self debugDrawPlayableArea];
     NSLog(@"Size : (%@)", NSStringFromCGSize(background.size));
 }
 
@@ -113,8 +135,8 @@
 }
 
 - (void)boundsCheckZombie {
-    CGPoint bottomLeft = CGPointZero;
-    CGPoint topRight = CGPointMake(self.size.width, self.size.height);
+    CGPoint bottomLeft = CGPointMake(0, CGRectGetMinY(self.playableRect));
+    CGPoint topRight = CGPointMake(self.size.width, CGRectGetMaxY(self.playableRect));
     
     SKSpriteNode *zombie = self.zombie1;
     
@@ -137,6 +159,18 @@
         zombie.position = CGPointMake(zombie.position.x, topRight.y);
         self.velocity = CGPointMake(self.velocity.x, -self.velocity.y);
     }
+}
+
+- (void)debugDrawPlayableArea {
+    SKShapeNode *shape = [SKShapeNode node];
+    CGMutablePathRef path = CGPathCreateMutable();
+    CGPathAddRect(path, nil, self.playableRect);
+    shape.path = path;
+    shape.strokeColor = [SKColor redColor];
+    shape.lineWidth = 14;
+    
+    [self addChild:shape];
+    
 }
 
 @end
