@@ -8,6 +8,8 @@
 
 #import "GameScene.h"
 
+#import "CGGeometry+ZCExtension.h"
+
 @interface GameScene ()
 @property (nonatomic, strong)   SKSpriteNode    *zombie1;
 @property (nonatomic, assign)   NSTimeInterval  lastUpdateTime;
@@ -31,7 +33,7 @@
 - (instancetype)initWithSize:(CGSize)size {
     CGFloat maxAspectRatio = 16.0 / 9.0;
     CGFloat playableHeight = size.width / maxAspectRatio;
-    CGFloat playableMargin = (size.height- playableHeight) / 2;
+    CGFloat playableMargin = (size.height - playableHeight) / 2;
     
     self.playableRect = CGRectMake(0, playableMargin, size.width, playableHeight);
     
@@ -114,26 +116,21 @@
 }
 
 - (void)moveSprite:(SKSpriteNode *)sprite velocity:(CGPoint)velocity {
-    CGFloat dt = self.dt;
-    CGPoint amountToMove = CGPointMake(velocity.x * dt, velocity.y * dt);
+    CGPoint amountToMove = CGMultiplicationVectorOnScalar(velocity, self.dt);
     
     NSLog(@"Amount to move: %@", NSStringFromCGPoint(amountToMove));
-    
-    CGPoint position = sprite.position;
-    sprite.position = CGPointMake(position.x + amountToMove.x, position.y + amountToMove.y);
+
+    sprite.position = CGAdditionVectors(sprite.position, amountToMove);
 }
 
 - (void)moveZombieToward:(CGPoint)location {
     SKSpriteNode *zombie = self.zombie1;
-    CGPoint position = zombie.position;
     CGFloat zombieMovePointsPerSec = self.zombieMovePointsPerSec;
     
-    CGPoint offset = CGPointMake(location.x - position.x, location.y - position.y);
+    CGPoint offset = CGSubtractionVectors(location, zombie.position);
     
-    double length = sqrt(offset.x * offset.x + offset.y * offset.y);
-    
-    CGPoint direction = CGPointMake(offset.x / length, offset.y / length);
-    self.velocity = CGPointMake(direction.x * zombieMovePointsPerSec, direction.y * zombieMovePointsPerSec);
+    CGPoint direction = CGNormalizedVector(offset);
+    self.velocity = CGMultiplicationVectorOnScalar(direction, zombieMovePointsPerSec);
 }
 
 - (void)boundsCheckZombie {
@@ -164,7 +161,7 @@
 }
 
 - (void)rotateSprite:(SKSpriteNode *)sprite direction:(CGPoint)direction {
-    sprite.zRotation = atan2(direction.y, direction.x);
+    sprite.zRotation = CGAngleVector(direction);
 }
 
 - (void)debugDrawPlayableArea {
@@ -176,7 +173,6 @@
     shape.lineWidth = 14;
     
     [self addChild:shape];
-    
 }
 
 @end
