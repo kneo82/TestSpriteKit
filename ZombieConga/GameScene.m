@@ -90,6 +90,8 @@
     [self moveSprite:zombie1 velocity:self.velocity];
     
     [self boundsCheckZombie];
+    
+    [self rotateSprite:zombie1 direction:self.velocity];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -159,6 +161,10 @@
         zombie.position = CGPointMake(zombie.position.x, topRight.y);
         self.velocity = CGPointMake(self.velocity.x, -self.velocity.y);
     }
+}
+
+- (void)rotateSprite:(SKSpriteNode *)sprite direction:(CGPoint)direction {
+    sprite.zRotation = atan2(direction.y, direction.x);
 }
 
 - (void)debugDrawPlayableArea {
