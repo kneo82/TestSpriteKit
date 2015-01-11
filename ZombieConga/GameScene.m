@@ -17,6 +17,7 @@
 @property (nonatomic, assign)   CGFloat         zombieMovePointsPerSec;
 @property (nonatomic, assign)   CGPoint         velocity;
 @property (nonatomic, assign)   CGRect          playableRect;
+@property (nonatomic, assign)   CGPoint         lastTouchLocation;
 
 - (void)sceneTouched:(CGPoint)touchLocation;
 - (void)moveSprite:(SKSpriteNode *)sprite velocity:(CGPoint)velocity;
@@ -88,23 +89,35 @@
     self.lastUpdateTime = currentTime;
     NSLog(@"%f  milliseconds since last update", self.dt * 1000);
     SKSpriteNode *zombie1 = self.zombie1;
+
+    CGPoint lastTouch = self.lastTouchLocation;
     
-    [self moveSprite:zombie1 velocity:self.velocity];
+    if (!CGPointEqualToPoint(lastTouch, CGPointZero)) {
+        CGPoint diff = CGSubtractionVectors(lastTouch, zombie1.position);
+        
+        if (CGLengthVector(diff) <= self.zombieMovePointsPerSec * self.dt) {
+            zombie1.position = lastTouch;
+            self.velocity = CGPointZero;
+        } else {
+            [self moveSprite:zombie1 velocity:self.velocity];
+            [self rotateSprite:zombie1 direction:self.velocity];
+        }
+    }
     
     [self boundsCheckZombie];
-    
-    [self rotateSprite:zombie1 direction:self.velocity];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     UITouch *touch = [touches anyObject];
     CGPoint touchLocation = [touch locationInNode:self];
+    self.lastTouchLocation = touchLocation;
     [self sceneTouched:touchLocation];
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
     UITouch *touch = [touches anyObject];
     CGPoint touchLocation = [touch locationInNode:self];
+    self.lastTouchLocation = touchLocation;
     [self sceneTouched:touchLocation];
 }
 
