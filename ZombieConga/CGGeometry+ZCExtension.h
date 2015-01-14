@@ -9,10 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <CoreGraphics/CoreGraphics.h>
 
-//@interface CGGeometry (ZCExtension)
-//
-//
-//@end
+#define DEGREES_TO_RADIANS(__ANGLE__) ((__ANGLE__) * 0.01745329252f) // PI / 180
+#define RADIANS_TO_DEGREES(__ANGLE__) ((__ANGLE__) * 57.29577951f) // PI * 180
 
 /**
  *  Operator |+| 
@@ -87,4 +85,25 @@ CGPoint CGNormalizedVector(CGPoint vector) {
 CG_INLINE
 CGFloat CGAngleVector(CGPoint vector) {
     return atan2(vector.y, vector.x);
+}
+
+CG_INLINE
+CGFloat CGShortestAngleBetween(CGFloat angle1, CGFloat angle2) {
+    CGFloat twoPi = M_PI * 2.0;
+    CGFloat angle = fmod((angle2 - angle1), twoPi);
+    
+    if (angle >= M_PI) {
+        angle = angle - twoPi;
+    }
+    
+    if (angle <= -M_PI) {
+        angle = angle + twoPi;
+    }
+    
+    return angle;
+}
+
+CG_INLINE
+CGFloat CGSign(CGFloat value) {
+    return value >= 0.0 ? 1.0 : -1.0;
 }

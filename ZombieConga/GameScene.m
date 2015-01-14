@@ -10,6 +10,8 @@
 
 #import "CGGeometry+ZCExtension.h"
 
+static const CGFloat zombieRotateRadiansPerSec = 4.0 * M_PI;
+
 @interface GameScene ()
 @property (nonatomic, strong)   SKSpriteNode    *zombie1;
 @property (nonatomic, assign)   NSTimeInterval  lastUpdateTime;
@@ -23,6 +25,9 @@
 - (void)moveSprite:(SKSpriteNode *)sprite velocity:(CGPoint)velocity;
 - (void)moveZombieToward:(CGPoint)location;
 - (void)boundsCheckZombie;
+- (void)rotateSprite:(SKSpriteNode *)sprite
+           direction:(CGPoint)direction
+ rotateRadiansPerSec:(CGFloat)radiansPerSec;
 
 @end
 
@@ -100,7 +105,8 @@
             self.velocity = CGPointZero;
         } else {
             [self moveSprite:zombie1 velocity:self.velocity];
-            [self rotateSprite:zombie1 direction:self.velocity];
+//            [self rotateSprite:zombie1 direction:self.velocity];
+            [self rotateSprite:zombie1 direction:self.velocity rotateRadiansPerSec:zombieRotateRadiansPerSec];
         }
     }
     
@@ -144,6 +150,15 @@
     
     CGPoint direction = CGNormalizedVector(offset);
     self.velocity = CGMultiplicationVectorOnScalar(direction, zombieMovePointsPerSec);
+}
+
+- (void)rotateSprite:(SKSpriteNode *)sprite
+           direction:(CGPoint)direction
+ rotateRadiansPerSec:(CGFloat)radiansPerSec
+{
+    CGFloat angle = CGShortestAngleBetween(sprite.zRotation, CGAngleVector(direction));
+    CGFloat amountToRotate = fmin(radiansPerSec * self.dt, fabs(angle));
+    sprite.zRotation += CGSign(angle) * amountToRotate;
 }
 
 - (void)boundsCheckZombie {
