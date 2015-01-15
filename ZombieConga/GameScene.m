@@ -29,6 +29,8 @@ static const CGFloat zombieRotateRadiansPerSec = 4.0 * M_PI;
            direction:(CGPoint)direction
  rotateRadiansPerSec:(CGFloat)radiansPerSec;
 
+- (void)spawnEnemy;
+
 @end
 
 @implementation GameScene
@@ -77,6 +79,8 @@ static const CGFloat zombieRotateRadiansPerSec = 4.0 * M_PI;
     self.zombie1 = zombie1;
     
     [self addChild:zombie1];
+    
+    [self spawnEnemy];
     
     [self debugDrawPlayableArea];
     NSLog(@"Size : (%@)", NSStringFromCGSize(background.size));
@@ -129,6 +133,20 @@ static const CGFloat zombieRotateRadiansPerSec = 4.0 * M_PI;
 
 #pragma mark -
 #pragma mark Private
+
+- (void)spawnEnemy {
+    SKSpriteNode *enemy = [[SKSpriteNode alloc] initWithImageNamed:@"enemy"];
+    
+    CGSize size = self.size;
+    enemy.position = CGPointMake(size.width / 2 + enemy.size.width / 2, size.height / 2);
+    
+    [self addChild:enemy];
+    
+    CGPoint moveTo = CGPointMake(-enemy.size.width / 2, enemy.position.y);
+    SKAction *action = [SKAction moveTo:moveTo duration:2];
+    
+    [enemy runAction:action];
+}
 
 - (void)sceneTouched:(CGPoint)touchLocation {
     [self moveZombieToward:touchLocation];
