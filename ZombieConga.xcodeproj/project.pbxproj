@@ -41,6 +41,7 @@
 		55BF97051A5AE9A400F6610C /* Icon32.png in Resources */ = {isa = PBXBuildFile; fileRef = 55BF96F11A5AE9A400F6610C /* Icon32.png */; };
 		55BF97061A5AE9A400F6610C /* Icon512.png in Resources */ = {isa = PBXBuildFile; fileRef = 55BF96F21A5AE9A400F6610C /* Icon512.png */; };
 		55BF97071A5AE9A400F6610C /* Icon64.png in Resources */ = {isa = PBXBuildFile; fileRef = 55BF96F31A5AE9A400F6610C /* Icon64.png */; };
+		55C06B861A5E5AC000511542 /* CGGeometry+ZCExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 55C06B851A5E5AC000511542 /* CGGeometry+ZCExtension.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,6 +96,8 @@
 		55BF96F11A5AE9A400F6610C /* Icon32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon32.png; sourceTree = "<group>"; };
 		55BF96F21A5AE9A400F6610C /* Icon512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon512.png; sourceTree = "<group>"; };
 		55BF96F31A5AE9A400F6610C /* Icon64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon64.png; sourceTree = "<group>"; };
+		55C06B841A5E5AC000511542 /* CGGeometry+ZCExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CGGeometry+ZCExtension.h"; sourceTree = "<group>"; };
+		55C06B851A5E5AC000511542 /* CGGeometry+ZCExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CGGeometry+ZCExtension.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,6 +150,8 @@
 				55BF96861A5AB69B00F6610C /* Images.xcassets */,
 				55BF96881A5AB69B00F6610C /* LaunchScreen.xib */,
 				55BF96741A5AB69B00F6610C /* Supporting Files */,
+				55C06B841A5E5AC000511542 /* CGGeometry+ZCExtension.h */,
+				55C06B851A5E5AC000511542 /* CGGeometry+ZCExtension.m */,
 			);
 			path = ZombieConga;
 			sourceTree = "<group>";
@@ -377,6 +382,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				55BF96821A5AB69B00F6610C /* GameViewController.m in Sources */,
+				55C06B861A5E5AC000511542 /* CGGeometry+ZCExtension.m in Sources */,
 				55BF967A1A5AB69B00F6610C /* AppDelegate.m in Sources */,
 				55BF967D1A5AB69B00F6610C /* GameScene.m in Sources */,
 				55BF96771A5AB69B00F6610C /* main.m in Sources */,
@@ -570,6 +576,7 @@
 				55BF969B1A5AB69B00F6610C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		55BF969C1A5AB69B00F6610C /* Build configuration list for PBXNativeTarget "ZombieCongaTests" */ = {
 			isa = XCConfigurationList;
@@ -578,6 +585,7 @@
 				55BF969E1A5AB69B00F6610C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
