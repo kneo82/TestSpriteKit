@@ -138,14 +138,27 @@ static const CGFloat zombieRotateRadiansPerSec = 4.0 * M_PI;
     SKSpriteNode *enemy = [[SKSpriteNode alloc] initWithImageNamed:@"enemy"];
     
     CGSize size = self.size;
-    enemy.position = CGPointMake(size.width / 2 + enemy.size.width / 2, size.height / 2);
+    CGSize enemySize = enemy.size;
+    
+    enemy.position = CGPointMake(size.width / 2 + enemySize.width / 2, size.height / 2);
     
     [self addChild:enemy];
     
-    CGPoint moveTo = CGPointMake(-enemy.size.width / 2, enemy.position.y);
-    SKAction *action = [SKAction moveTo:moveTo duration:2];
+//    CGPoint moveTo = CGPointMake(-enemy.size.width / 2, enemy.position.y);
+//    SKAction *action = [SKAction moveTo:moveTo duration:2];
+    // 1
+    CGPoint pointMidMove = CGPointMake(size.width / 2, CGRectGetMinY(self.playableRect) + enemySize.height / 2);
+    SKAction *actionMidMove = [SKAction moveTo:pointMidMove duration:1.0];
+
+    // 2
+    CGPoint pointMove = CGPointMake(-enemySize.width / 2, enemy.position.y);
+    SKAction *actionMove = [SKAction moveTo:pointMove duration:1.0];
+
+    // 3
+    SKAction *sequence = [SKAction sequence:@[actionMidMove, actionMove]];
     
-    [enemy runAction:action];
+    // 4    
+    [enemy runAction:sequence];
 }
 
 - (void)sceneTouched:(CGPoint)touchLocation {
