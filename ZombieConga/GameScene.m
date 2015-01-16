@@ -96,7 +96,7 @@ static const CGFloat zombieRotateRadiansPerSec = 4.0 * M_PI;
     }
     
     self.lastUpdateTime = currentTime;
-    NSLog(@"%f  milliseconds since last update", self.dt * 1000);
+//    NSLog(@"%f  milliseconds since last update", self.dt * 1000);
     SKSpriteNode *zombie1 = self.zombie1;
 
     CGPoint lastTouch = self.lastTouchLocation;
@@ -140,24 +140,27 @@ static const CGFloat zombieRotateRadiansPerSec = 4.0 * M_PI;
     CGSize size = self.size;
     CGSize enemySize = enemy.size;
     
-    enemy.position = CGPointMake(size.width / 2 + enemySize.width / 2, size.height / 2);
+    enemy.position = CGPointMake(size.width /* / 2 */ - enemySize.width / 2, size.height / 2);
     
     [self addChild:enemy];
     
 //    CGPoint moveTo = CGPointMake(-enemy.size.width / 2, enemy.position.y);
 //    SKAction *action = [SKAction moveTo:moveTo duration:2];
-    // 1
+
     CGPoint pointMidMove = CGPointMake(size.width / 2, CGRectGetMinY(self.playableRect) + enemySize.height / 2);
     SKAction *actionMidMove = [SKAction moveTo:pointMidMove duration:1.0];
 
-    // 2
     CGPoint pointMove = CGPointMake(-enemySize.width / 2, enemy.position.y);
     SKAction *actionMove = [SKAction moveTo:pointMove duration:1.0];
 
-    // 3
-    SKAction *sequence = [SKAction sequence:@[actionMidMove, actionMove]];
+    SKAction *wait = [SKAction waitForDuration:0.25];
     
-    // 4    
+    SKAction *logMessage = [SKAction runBlock:^{
+        NSLog(@"Reached bottom!");
+    }];
+    
+    SKAction *sequence = [SKAction sequence:@[wait, actionMidMove, logMessage, wait, actionMove]];
+ 
     [enemy runAction:sequence];
 }
 
