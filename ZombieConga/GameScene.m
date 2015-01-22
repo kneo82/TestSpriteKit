@@ -147,14 +147,14 @@ static const CGFloat zombieRotateRadiansPerSec = 4.0 * M_PI;
     CGSize size = self.size;
     CGSize enemySize = enemy.size;
     
-    CGFloat min = CGRectGetMinY(self.playableRect) + size.height / 2;
-    CGFloat max = CGRectGetMinY(self.playableRect) - size.height / 2;
+    CGFloat min = CGRectGetMinY(self.playableRect) + enemySize.height / 2;
+    CGFloat max = CGRectGetMaxY(self.playableRect) - enemySize.height / 2;
     
     enemy.position = CGPointMake(size.width /* / 2 */ - enemySize.width / 2, CGFloatRandomInRange(min, max));
     
     [self addChild:enemy];
     
-    SKAction *actionMove = [SKAction moveToX:(-size.width / 2) duration:2.0];
+    SKAction *actionMove = [SKAction moveToX:(-enemySize.width / 2) duration:4.0];
     
     [enemy runAction:actionMove];
 
