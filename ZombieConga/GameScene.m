@@ -94,17 +94,21 @@ static NSString * const kZCAnimationKey = @"animation";
     
     [self addChild:zombie1];
     
-//    [zombie1 runAction:[SKAction repeatActionForever:self.zombieAnimation]];
-//    [self startZombieAnimation];
-    
+    // Spawn enemy
     [self runAction:[SKAction repeatActionForever:[SKAction sequence:@[
                                                                        [SKAction runBlock:^{
                                                                             [self spawnEnemy];
                                                                         }],
                                                                        [SKAction waitForDuration:4]]] ]];
 
+    // Spawn cats
+    [self runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction runBlock:^{
+                                                                                            [self spawnCat];
+                                                                                        }],
+                                                                       [SKAction waitForDuration:1]]]]];
     
     [self debugDrawPlayableArea];
+    
     NSLog(@"Size : (%@)", NSStringFromCGSize(background.size));
 }
 
@@ -155,6 +159,28 @@ static NSString * const kZCAnimationKey = @"animation";
 
 #pragma mark -
 #pragma mark Private
+
+- (void)spawnCat {
+    SKSpriteNode *cat = [[SKSpriteNode alloc] initWithImageNamed:@"cat"];
+    CGRect rect = self.playableRect;
+    
+    CGFloat x= CGFloatRandomInRange(CGRectGetMinX(rect), CGRectGetMaxX(rect));
+    CGFloat y= CGFloatRandomInRange(CGRectGetMinY(rect), CGRectGetMaxY(rect));
+    
+    cat.position = CGPointMake(x, y);
+    [cat setScale:0];
+    
+    [self addChild:cat];
+    
+    SKAction *appear = [SKAction scaleTo:1 duration:.5];
+    SKAction *wait = [SKAction waitForDuration:10];
+    SKAction *disappear = [SKAction scaleTo:0 duration:.5];
+    SKAction *removeFromParent = [SKAction removeFromParent];
+    
+    NSArray *actions = @[appear, wait, disappear, removeFromParent];
+    
+    [cat runAction:[SKAction sequence:actions]];
+}
 
 - (void)spawnEnemy {
     SKSpriteNode *enemy = [[SKSpriteNode alloc] initWithImageNamed:@"enemy"];
