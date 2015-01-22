@@ -80,7 +80,14 @@ static const CGFloat zombieRotateRadiansPerSec = 4.0 * M_PI;
     
     [self addChild:zombie1];
     
-    [self spawnEnemy];
+//    [self spawnEnemy];
+    
+    [self runAction:[SKAction repeatActionForever:[SKAction sequence:@[
+                                                                       [SKAction runBlock:^{
+                                                                            [self spawnEnemy];
+                                                                        }],
+                                                                       [SKAction waitForDuration:2]]] ]];
+
     
     [self debugDrawPlayableArea];
     NSLog(@"Size : (%@)", NSStringFromCGSize(background.size));
@@ -140,42 +147,50 @@ static const CGFloat zombieRotateRadiansPerSec = 4.0 * M_PI;
     CGSize size = self.size;
     CGSize enemySize = enemy.size;
     
-    enemy.position = CGPointMake(size.width /* / 2 */ - enemySize.width / 2, size.height / 2);
+    CGFloat min = CGRectGetMinY(self.playableRect) + size.height / 2;
+    CGFloat max = CGRectGetMinY(self.playableRect) - size.height / 2;
+    
+    enemy.position = CGPointMake(size.width /* / 2 */ - enemySize.width / 2, CGFloatRandomInRange(min, max));
     
     [self addChild:enemy];
+    
+    SKAction *actionMove = [SKAction moveToX:(-size.width / 2) duration:2.0];
+    
+    [enemy runAction:actionMove];
+
     
 //    CGPoint moveTo = CGPointMake(-enemy.size.width / 2, enemy.position.y);
 //    SKAction *action = [SKAction moveTo:moveTo duration:2];
 
-    CGPoint pointMidMove = CGPointMake(size.width / 2, CGRectGetMinY(self.playableRect) + enemySize.height / 2);
-//    SKAction *actionMidMove = [SKAction moveTo:pointMidMove duration:1.0];
-    SKAction *actionMidMove = [SKAction moveByX:(-(size.width / 2 - enemy.size.width / 2))
-                                              y:(-CGRectGetHeight(self.playableRect) / 2 + enemySize.height / 2)
-                                       duration:1];
-
-    CGPoint pointMove = CGPointMake(-enemySize.width / 2, enemy.position.y);
-//    SKAction *actionMove = [SKAction moveTo:pointMove duration:1.0];
-    SKAction *actionMove = [SKAction moveByX:(-(size.width / 2 - enemySize.width / 2))
-                                           y:(CGRectGetHeight(self.playableRect) / 2 - enemySize.height / 2)
-                                    duration:1];
-
-    SKAction *reverseMid = [actionMidMove reversedAction];
-    SKAction *reverseMove = [actionMove reversedAction];
-    
-    SKAction *wait = [SKAction waitForDuration:0.25];
-    
-    SKAction *logMessage = [SKAction runBlock:^{
-        NSLog(@"Reached bottom!");
-    }];
-    
-//    SKAction *sequence = [SKAction sequence:@[actionMidMove, logMessage, wait, actionMove, wait, reverseMove, wait, reverseMid]];
- 
-    SKAction *halfSequence = [SKAction sequence:@[actionMidMove, logMessage, wait, actionMove, wait]];
-    SKAction *sequence = [SKAction sequence:@[halfSequence, halfSequence.reversedAction]];
-    
-    SKAction *repeate = [SKAction repeatActionForever:sequence];
-    
-    [enemy runAction:repeate];
+//    CGPoint pointMidMove = CGPointMake(size.width / 2, CGRectGetMinY(self.playableRect) + enemySize.height / 2);
+////    SKAction *actionMidMove = [SKAction moveTo:pointMidMove duration:1.0];
+//    SKAction *actionMidMove = [SKAction moveByX:(-(size.width / 2 - enemy.size.width / 2))
+//                                              y:(-CGRectGetHeight(self.playableRect) / 2 + enemySize.height / 2)
+//                                       duration:1];
+//
+//    CGPoint pointMove = CGPointMake(-enemySize.width / 2, enemy.position.y);
+////    SKAction *actionMove = [SKAction moveTo:pointMove duration:1.0];
+//    SKAction *actionMove = [SKAction moveByX:(-(size.width / 2 - enemySize.width / 2))
+//                                           y:(CGRectGetHeight(self.playableRect) / 2 - enemySize.height / 2)
+//                                    duration:1];
+//
+//    SKAction *reverseMid = [actionMidMove reversedAction];
+//    SKAction *reverseMove = [actionMove reversedAction];
+//    
+//    SKAction *wait = [SKAction waitForDuration:0.25];
+//    
+//    SKAction *logMessage = [SKAction runBlock:^{
+//        NSLog(@"Reached bottom!");
+//    }];
+//    
+////    SKAction *sequence = [SKAction sequence:@[actionMidMove, logMessage, wait, actionMove, wait, reverseMove, wait, reverseMid]];
+// 
+//    SKAction *halfSequence = [SKAction sequence:@[actionMidMove, logMessage, wait, actionMove, wait]];
+//    SKAction *sequence = [SKAction sequence:@[halfSequence, halfSequence.reversedAction]];
+//    
+//    SKAction *repeate = [SKAction repeatActionForever:sequence];
+//    
+//    [enemy runAction:repeate];
 }
 
 - (void)sceneTouched:(CGPoint)touchLocation {

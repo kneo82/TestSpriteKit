@@ -107,3 +107,16 @@ CG_INLINE
 CGFloat CGSign(CGFloat value) {
     return value >= 0.0 ? 1.0 : -1.0;
 }
+
+CG_INLINE
+CGFloat CGFloatRandom() {
+    return ((CGFloat)arc4random()) / ((CGFloat)UINT32_MAX);
+}
+
+CG_INLINE
+CGFloat CGFloatRandomInRange(CGFloat min, CGFloat max) {
+    return CGFloatRandom() * (max - min) + min;
+}
+
+
+
