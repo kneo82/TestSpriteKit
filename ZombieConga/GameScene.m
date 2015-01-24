@@ -91,7 +91,7 @@ static NSString * const kZCAnimationKey = @"animation";
     SKSpriteNode *zombie1 = [[SKSpriteNode alloc] initWithImageNamed:@"zombie1"];
     zombie1.position = CGPointMake(400, 400);
     self.zombie1 = zombie1;
-    
+
     [self addChild:zombie1];
     
     // Spawn enemy
@@ -172,12 +172,27 @@ static NSString * const kZCAnimationKey = @"animation";
     
     [self addChild:cat];
     
+    cat.zRotation = - M_PI / 16.0;
+    
+    SKAction *scaleUp = [SKAction scaleBy:1.2 duration:0.25];
+    SKAction *scaleDown = [scaleUp reversedAction];
+    SKAction *fullScale = [SKAction sequence:@[scaleUp, scaleDown, scaleUp, scaleDown]];
+
+    SKAction *leftWiggle = [SKAction rotateByAngle:(M_PI / 8) duration:0.5];
+    SKAction *rightWiggle = [leftWiggle reversedAction];
+    SKAction *fullWiggle = [SKAction sequence:@[leftWiggle, rightWiggle]];
+//    SKAction *wiggleWait = [SKAction repeatAction:fullWiggle count:10];
+    
+    SKAction *group = [SKAction group:@[fullScale, fullWiggle]];
+    SKAction *groupWait = [SKAction repeatAction:group count:10];
+    
     SKAction *appear = [SKAction scaleTo:1 duration:.5];
-    SKAction *wait = [SKAction waitForDuration:10];
+//    SKAction *wait = [SKAction waitForDuration:10];
     SKAction *disappear = [SKAction scaleTo:0 duration:.5];
     SKAction *removeFromParent = [SKAction removeFromParent];
     
-    NSArray *actions = @[appear, wait, disappear, removeFromParent];
+    NSArray *actions = @[appear, groupWait, disappear, removeFromParent];
+    
     
     [cat runAction:[SKAction sequence:actions]];
 }
