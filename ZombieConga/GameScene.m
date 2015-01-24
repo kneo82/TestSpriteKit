@@ -10,8 +10,10 @@
 
 #import "CGGeometry+ZCExtension.h"
 
-static const CGFloat zombieRotateRadiansPerSec = 4.0 * M_PI;
-static NSString * const kZCAnimationKey = @"animation";
+static const CGFloat zombieRotateRadiansPerSec  = 4.0 * M_PI;
+static NSString * const kZCAnimationKey         = @"animation";
+static NSString * const kZCCatSpriteName        = @"cat";
+static NSString * const kZCEnemySpriteName      = @"enemy";
 
 @interface GameScene ()
 @property (nonatomic, strong)   SKSpriteNode    *zombie1;
@@ -22,6 +24,8 @@ static NSString * const kZCAnimationKey = @"animation";
 @property (nonatomic, assign)   CGRect          playableRect;
 @property (nonatomic, assign)   CGPoint         lastTouchLocation;
 @property (nonatomic, strong)   SKAction        *zombieAnimation;
+@property (nonatomic, readonly)   SKAction        *catCollisionSound;
+@property (nonatomic, readonly)   SKAction        *enemyCollisionSound;
 
 - (void)sceneTouched:(CGPoint)touchLocation;
 - (void)moveSprite:(SKSpriteNode *)sprite velocity:(CGPoint)velocity;
@@ -36,6 +40,25 @@ static NSString * const kZCAnimationKey = @"animation";
 @end
 
 @implementation GameScene
+
+@synthesize catCollisionSound = _catCollisionSound;
+@synthesize enemyCollisionSound = _enemyCollisionSound;
+
+- (SKAction *)catCollisionSound {
+    if (!_catCollisionSound) {
+        _catCollisionSound = [SKAction playSoundFileNamed:@"hitCat.wav" waitForCompletion:NO];
+    }
+    
+    return  _catCollisionSound;
+}
+
+- (SKAction *)enemyCollisionSound {
+    if (!_enemyCollisionSound) {
+        _enemyCollisionSound = [SKAction playSoundFileNamed:@"hitCatLady.wav" waitForCompletion:NO];
+    }
+    
+    return  _enemyCollisionSound;
+}
 
 #pragma mark -
 #pragma mark Initialization and Dealocation
@@ -141,6 +164,13 @@ static NSString * const kZCAnimationKey = @"animation";
     }
     
     [self boundsCheckZombie];
+//    [self checkCollisions];
+}
+
+- (void)didEvaluateActions {
+    [super didEvaluateActions];
+    
+    [self checkCollisions];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -160,8 +190,50 @@ static NSString * const kZCAnimationKey = @"animation";
 #pragma mark -
 #pragma mark Private
 
+- (void)zombieHitCat:(SKSpriteNode *)cat {
+    [self runAction:self.catCollisionSound];
+
+    [cat removeFromParent];
+}
+
+- (void)zombieHitEnemy:(SKSpriteNode *)enemy {
+    [self runAction:self.enemyCollisionSound];
+    
+    [enemy removeFromParent];
+}
+
+- (void)checkCollisions {
+    NSMutableArray *hitCats = [NSMutableArray array];
+    
+    [self enumerateChildNodesWithName:kZCCatSpriteName usingBlock:^(SKNode *node, BOOL *stop) {
+        SKSpriteNode *cat = (SKSpriteNode *)node;
+        
+        if (CGRectIntersectsRect(cat.frame, self.zombie1.frame)) {
+            [hitCats addObject:cat];
+        }
+    }];
+    
+    for (SKSpriteNode *cat in hitCats) {
+        [self zombieHitCat:cat];
+    }
+    
+    NSMutableArray *hitEnemies = [NSMutableArray array];
+    
+    [self enumerateChildNodesWithName:kZCEnemySpriteName usingBlock:^(SKNode *node, BOOL *stop) {
+        SKSpriteNode *enemy = (SKSpriteNode *)node;
+        
+        if (CGRectIntersectsRect(CGRectInset(node.frame, 20, 20), self.zombie1.frame)) {
+            [hitEnemies addObject:enemy];
+        }
+    }];
+    
+    for (SKSpriteNode *enemy in hitEnemies) {
+        [self zombieHitEnemy:enemy];
+    }
+}
+
 - (void)spawnCat {
-    SKSpriteNode *cat = [[SKSpriteNode alloc] initWithImageNamed:@"cat"];
+    SKSpriteNode *cat = [[SKSpriteNode alloc] initWithImageNamed:kZCCatSpriteName];
     CGRect rect = self.playableRect;
     
     CGFloat x= CGFloatRandomInRange(CGRectGetMinX(rect), CGRectGetMaxX(rect));
@@ -169,6 +241,8 @@ static NSString * const kZCAnimationKey = @"animation";
     
     cat.position = CGPointMake(x, y);
     [cat setScale:0];
+    
+    cat.name = kZCCatSpriteName;
     
     [self addChild:cat];
     
@@ -207,6 +281,8 @@ static NSString * const kZCAnimationKey = @"animation";
     CGFloat max = CGRectGetMaxY(self.playableRect) - enemySize.height / 2;
     
     enemy.position = CGPointMake(size.width - enemySize.width / 2, CGFloatRandomInRange(min, max));
+    
+    enemy.name = kZCEnemySpriteName;
     
     [self addChild:enemy];
     
